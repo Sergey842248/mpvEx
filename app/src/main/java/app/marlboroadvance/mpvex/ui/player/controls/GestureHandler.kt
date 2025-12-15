@@ -340,8 +340,10 @@ fun GestureHandler(
                   // Handle the gesture
                   when (gestureType) {
                     GestureType.HORIZONTAL_SEEK -> {
+                      val currentDuration = duration ?: 0
+                      if (currentDuration <= 0) return@forEach
                       if ((position ?: 0) <= 0 && dragX < 0) return@forEach
-                      if ((position ?: 0) >= (duration ?: 0) && dragX > 0) return@forEach
+                      if ((position ?: 0) >= currentDuration && dragX > 0) return@forEach
 
                       val newPosition = calculateNewHorizontalGestureValue(
                         startingPosition,
@@ -350,11 +352,12 @@ fun GestureHandler(
                         0.15f,
                       )
 
+                      // Update visual indicator
                       viewModel.gestureSeekAmount.update { _ ->
                         Pair(
                           startingPosition,
                           (newPosition - startingPosition)
-                            .coerceIn(0 - startingPosition, ((duration ?: 0) - startingPosition)),
+                            .coerceIn(0 - startingPosition, (currentDuration - startingPosition)),
                         )
                       }
                       viewModel.seekTo(newPosition)

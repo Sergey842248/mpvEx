@@ -411,7 +411,7 @@ class PlayerViewModel(
     // Cancel pending relative seek before absolute seek
     seekCoalesceJob?.cancel()
     pendingSeekOffset = 0
-    val seekMode = if (playerPreferences.usePreciseSeeking.get()) "absolute+exact" else "absolute+keyframes"
+    val seekMode = "absolute+exact" // Always use exact seeking to prevent jumping to keyframes
     MPVLib.command("seek", position.toString(), seekMode)
   }
 

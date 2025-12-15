@@ -226,19 +226,21 @@ private fun SquigglySeekbar(
       modifier
         .fillMaxWidth()
         .height(48.dp)
-        .pointerInput(Unit) {
+        .pointerInput(duration) {
           detectTapGestures { offset ->
+            if (duration <= 0f) return@detectTapGestures
             val newPosition = (offset.x / size.width) * duration
             onSeek(newPosition.coerceIn(0f, duration))
             onSeekFinished()
           }
         }
-        .pointerInput(Unit) {
+        .pointerInput(duration) {
           detectDragGestures(
             onDragStart = { },
-            onDragEnd = { onSeekFinished() },
-            onDragCancel = { onSeekFinished() },
+            onDragEnd = { if (duration > 0f) onSeekFinished() },
+            onDragCancel = { if (duration > 0f) onSeekFinished() },
           ) { change, _ ->
+            if (duration <= 0f) return@detectDragGestures
             change.consume()
             val newPosition = (change.position.x / size.width) * duration
             onSeek(newPosition.coerceIn(0f, duration))
